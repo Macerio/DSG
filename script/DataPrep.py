@@ -1,23 +1,23 @@
-from data_prep_MC import data_prep_MC
-from data_prep_AP import data_prep_AP
-from data_prep_FR import data_prep_FR
+from data_prep_MC import DataPrepMC
+from data_prep_AP import DataPrepAP
+from data_prep_FR import DataPrepFR
 
 import pandas as pd
 
 class DataPrep():
 	def __init__(self):
-		self.data_prep_MC = data_prep_MC()
-		self.data_prep_AP = data_prep_AP()
-		self.data_prep_FR = data_prep_FR()
+		self.DataPrepMC = DataPrepMC()
+		self.DataPrepAP = DataPrepAP()
+		self.DataPrepFR = DataPrepFR()
 	
 	def fit(X,y):
-		self.data_prep_MC.fit(X,y)
-		self.data_prep_AP.fit(X,y)
-		self.data_prep_FR.fit(X,y)
+		self.DataPrepMC.fit(X,y)
+		self.DataPrepAP.fit(X,y)
+		self.DataPrepFR.fit(X,y)
 
 	def transform(X):
-		MC = data_prep_MC.transform(X)
-		AP = data_prep_AP.transform(X)
-		FR = data_prep_FR.transform(X)
+		MC = DataPrepMC.transform(X)
+		AP = DataPrepAP.transform(X)
+		FR = DataPrepFR.transform(X)
 		final = pd.merge(pd.merge(MC, AP, on="sid"), FR, on="sid")
 		return final
