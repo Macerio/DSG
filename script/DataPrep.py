@@ -17,7 +17,12 @@ class DataPrep():
 		self.DataPrepFR.fit(X=X,y=y)
 
 	def transform(self,X):
-		MC = DataPrepMC.transform(X=X)
-		AP = DataPrepAP.transform(X=X)
-		FR = DataPrepFR.transform(X=X)
+		MC = self.DataPrepMC.transform(X=X)
+		AP = self.DataPrepAP.transform(X=X)
+		FR = self.DataPrepFR.transform(X=X)
 		return MC.merge(AP, on="sid").merge(FR, on="sid")
+
+
+
+
+
