@@ -11,14 +11,13 @@ class DataPrep():
 		self.DataPrepAP = DataPrepAP()
 		self.DataPrepFR = DataPrepFR()
 	
-	def fit(X,y):
-		self.DataPrepMC.fit(X,y)
-		self.DataPrepAP.fit(X,y)
-		self.DataPrepFR.fit(X,y)
+	def fit(self,X,y):
+		self.DataPrepMC.fit(X=X,y=y)
+		self.DataPrepAP.fit(X=X,y=y)
+		self.DataPrepFR.fit(X=X,y=y)
 
-	def transform(X):
-		MC = DataPrepMC.transform(X)
-		AP = DataPrepAP.transform(X)
-		FR = DataPrepFR.transform(X)
-		final = pd.merge(pd.merge(MC, AP, on="sid"), FR, on="sid")
-		return final
+	def transform(self,X):
+		MC = DataPrepMC.transform(X=X)
+		AP = DataPrepAP.transform(X=X)
+		FR = DataPrepFR.transform(X=X)
+		return MC.merge(AP, on="sid").merge(FR, on="sid")
