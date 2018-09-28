@@ -16,6 +16,7 @@ target = pd.read_csv('../../data/train_session.csv.gz', compression='gzip', nrow
 print('reading products...')
 products = pd.read_csv('../../data/dsg18_cdiscount_productid_category.csv.gz', compression='gzip', nrows=nrows).astype(str)
 products = products.loc[products.category_product_id_level1.str.len() <= 2,:]
+df.sku = df.sku.astype(str)
 df = df.merge(products.rename(columns={'product_id':'sku'}), on='sku', how='left')
 df = df.merge(target, on='sid')
 del products
