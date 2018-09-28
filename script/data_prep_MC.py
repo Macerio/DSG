@@ -47,7 +47,6 @@ class DataPrepMC(TransformerMixin):
         df.loc[:,'proba_t_mean_cum'] = df.groupby('sid').proba_t.cumsum()/(1+df.groupby('sid').cumcount())
         df.loc[:,'proba_A_sh_B'] = df.proba_type*df.proba_t
         
-        
         # Get the mean of prod price
         def get_prod(col) : 
             try : 
