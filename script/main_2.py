@@ -3,11 +3,8 @@ import gc
 import pandas as pd
 
 # Reading data
-<<<<<<< HEAD
 nrows = None
-=======
 nrows = 10000
->>>>>>> 76971d3b4d4337f08e5b3c05ac746fa4b0cc4fa2
 if nrows==5:
 	print('DEBUG MODE')
 else:
