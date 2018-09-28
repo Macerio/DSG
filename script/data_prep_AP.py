@@ -3,7 +3,7 @@ from sklearn.base import TransformerMixin
 
 class DataPrepAP(TransformerMixin):
 
-	def __init__():
+	def __init__(self):
 		pass
 
 	def fit(X, y=None, **kwargs):
