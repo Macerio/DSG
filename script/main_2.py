@@ -3,7 +3,7 @@ import gc
 import pandas as pd
 
 # Reading data
-nrows = 5
+nrows = None
 if nrows==5:
 	print('DEBUG MODE')
 else:

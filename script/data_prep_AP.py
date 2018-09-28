@@ -18,6 +18,7 @@ class DataPrepAP(TransformerMixin):
 		                                 columns="category_product_id_level1", 
 		                                 values="type", 
 		                                 aggfunc="count").reset_index())
+		pv.fillna(value=0, inplace=True)
 		pv = pv.add_prefix('cat_level1_')
 		df_agg_sid = pd.merge(df_agg_sid, pv, left_on='sid', right_on='cat_level1_sid', how='left')
 		return df_agg_sid
