@@ -9,9 +9,9 @@ class DataPrepMC(TransformerMixin):
     def __init__(self):
         pass
 
-    def fit(X, y=None, **kwargs):
+    def fit(self, X, y=None, **kwargs):
         
-        df = X
+        df = pd.merge(X, Y, how = "left", on = "sid" )
         df['type_avt'] = df.type_simplified.shift(1)
         df['same_sid'] = (df.sid==df.sid.shift(1))
         df.loc[~df.same_sid, 'type_avt'] = None
@@ -21,22 +21,11 @@ class DataPrepMC(TransformerMixin):
         self.proba_type  = df.groupby('type_simplified' , as_index=False).agg({'target' : 'mean'})        
         return self
 
-    def transform(X, **kwargs):
+    def transform(self, X, **kwargs):
         
         df = X
-        df.duration = pd.to_timedelta(df.duration).dt.total_seconds()
-        
-        # Target, duration totale / sid
-        if is_train:
-            prepared_data = \
-            pd.DataFrame(df.groupby('sid', as_index=False).agg({'target':['last'], 'duration': ['last']}).values, 
-                         columns=['sid', 'target', 'duration'])
-        else:
-            prepared_data = \
-            pd.DataFrame(df.groupby('sid', as_index=False).agg({'duration': ['last']}).values, 
-                         columns=['sid', 'duration'])
-        
         # Probabilities to reach target / action
+        print(">> Proba transition state")
         table_proba_target = self.table_proba_target
         proba_type = self.proba_type
         df['type_avt'] = df.type_simplified.shift(1)
@@ -50,6 +39,7 @@ class DataPrepMC(TransformerMixin):
         df.loc[:,'proba_A_sh_B'] = df.proba_type*df.proba_t
         
         # Get the mean of prod price
+        print(">> Price of product")
         def get_prod(col) : 
             try : 
                 regex = r"(\d{1,}\.\d{2,})"#r"'price': (\d*.\d*)"
@@ -64,6 +54,7 @@ class DataPrepMC(TransformerMixin):
         df['ecart_mean_price'] =  df.parse_price.progress_apply(lambda x :np.var(x)/np.mean(x) if x else None )
 
         # Get the mean popularity of the product
+        print(">>> Popularity prod")
         def get_vote(col) : 
             try : 
                 regex = r"'rvoter': (\d{1,}\.\d{1,})"#r"'price': (\d*.\d*)"
