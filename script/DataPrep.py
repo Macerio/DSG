@@ -5,6 +5,7 @@ from data_prep_FR import DataPrepFR
 import pandas as pd
 
 class DataPrep():
+	
 	def __init__(self):
 		self.DataPrepMC = DataPrepMC()
 		self.DataPrepAP = DataPrepAP()
