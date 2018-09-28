@@ -11,7 +11,8 @@ class DataPrepMC(TransformerMixin):
 
     def fit(self, X, y=None, **kwargs):
         
-        df = pd.merge(X, Y, how = "left", on = "sid" )
+        df = X
+        df['target'] = y
         df['type_avt'] = df.type_simplified.shift(1)
         df['same_sid'] = (df.sid==df.sid.shift(1))
         df.loc[~df.same_sid, 'type_avt'] = None
@@ -49,9 +50,9 @@ class DataPrepMC(TransformerMixin):
                 return 
 
         df['parse_price'] = None
-        df.loc[~df.products.isnull(),'parse_price'] = df.loc[~df.products.isnull(),'products'].progress_apply(lambda u: get_prod(u))
-        df['mean_price'] =  df.parse_price.progress_apply(lambda x : np.mean(x) if x else None )
-        df['ecart_mean_price'] =  df.parse_price.progress_apply(lambda x :np.var(x)/np.mean(x) if x else None )
+        df.loc[~df.products.isnull(),'parse_price'] = df.loc[~df.products.isnull(),'products'].apply(lambda u: get_prod(u))
+        df['mean_price'] =  df.parse_price.apply(lambda x : np.mean(x) if x else None )
+        df['ecart_mean_price'] =  df.parse_price.apply(lambda x :np.var(x)/np.mean(x) if x else None )
 
         # Get the mean popularity of the product
         print(">>> Popularity prod")
@@ -64,15 +65,12 @@ class DataPrepMC(TransformerMixin):
                 return
 
         df['parse_pop'] = None
-        df.loc[~df.carproducts.isnull(),'parse_pop'] = df.loc[~df.carproducts.isnull(),'carproducts'].progress_apply(lambda u: get_vote(u))
-        df.loc[:,'parse_pop2'] = df.loc[:,'parse_pop'].progress_apply(lambda u: np.mean([float(re.sub(r"'rvoter': ",'',e)) for e in u ] ) if u else None)
+        df.loc[~df.carproducts.isnull(),'parse_pop'] = df.loc[~df.carproducts.isnull(),'carproducts'].apply(lambda u: get_vote(u))
+        df.loc[:,'parse_pop2'] = df.loc[:,'parse_pop'].apply(lambda u: np.mean([float(re.sub(r"'rvoter': ",'',e)) for e in u ] ) if u else None)
         
         best_feature_mc = df.groupby('sid', as_index=False).agg({'proba_t' : ['mean','last'],'proba_t_mean_cum' : 'last', 'proba_pass' : ['mean','last', 'max'], \
-                                                                'proba_type' : 'mean', 'proba_A_sh_B' : 'mean', 'parse_pop2' : ['mean', 'max'], \
-                                                                'mean_price' : 'mean', 'ecart_mean_price' : ['mean', 'max']})
+                                                                'proba_type' : 'mean', 'proba_A_sh_B' : 'mean'}) #, 'parse_pop2' : ['mean', 'max'], 'mean_price' : 'mean', 'ecart_mean_price' : ['mean', 'max']
         best_feature_mc.columns = ['sid', 'proba_evnt_t_mean', 'proba_evnt_t_last',  'proba_pass_t_cum_last','proba_pass_mean','proba_pass_last','proba_pass_max', \
-                                  'proba_type', 'proba_A_sh_B', 'parse_pop2_mean', 'parse_pop2_max', 'mean_price', 'ecart_mean_price_mean', 'ecart_mean_price_max'] 
-        prepared_data = \
-        prepared_data.merge(best_feature_mc, on='sid')
+                                  'proba_type', 'proba_A_sh_B' ] #, 'parse_pop2_mean', 'parse_pop2_max', 'mean_price', 'ecart_mean_price_mean', 'ecart_mean_price_max'
         
-        return prepared_data
+        return best_feature_mc
