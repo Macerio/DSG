@@ -6,10 +6,11 @@ from tqdm import tqdm
 
 class DataPrepMC(TransformerMixin):
 
-	def __init__(self):
-		pass
+    def __init__(self):
+        pass
 
-	def fit(X, y=None, **kwargs):
+    def fit(X, y=None, **kwargs):
+        
         df = X
         df['type_avt'] = df.type_simplified.shift(1)
         df['same_sid'] = (df.sid==df.sid.shift(1))
@@ -18,9 +19,10 @@ class DataPrepMC(TransformerMixin):
         df['count_r'] = 1*df.same_sid
         self.table_proba_target = df.groupby('passage' , as_index=False).agg({'target' : 'mean','count_r' : lambda x : x.sum()/len(df.passage)})
         self.proba_type  = df.groupby('type_simplified' , as_index=False).agg({'target' : 'mean'})        
-		return self
+        return self
 
-	def transform(X, **kwargs):
+    def transform(X, **kwargs):
+        
         df = X
         df.duration = pd.to_timedelta(df.duration).dt.total_seconds()
         
@@ -82,4 +84,4 @@ class DataPrepMC(TransformerMixin):
         prepared_data = \
         prepared_data.merge(best_feature_mc, on='sid')
         
-		return prepared_data
+        return prepared_data
