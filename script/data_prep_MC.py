@@ -50,7 +50,6 @@ class DataPrepMC(TransformerMixin):
         df['parse_price'] = None
         df.loc[~df.products.isnull(),'parse_price'] = df.loc[~df.products.isnull(),'products'].apply(lambda u: get_prod(u))
         df['mean_price'] =  df.parse_price.apply(lambda x : np.mean(x) if x else None )
-        print(df[~df.products.isnull()].head(10))
         df['ecart_mean_price'] =  df.parse_price.apply(lambda x :np.var(x)/np.mean(x) if x else None )
 
         # Get the mean popularity of the product
@@ -64,9 +63,6 @@ class DataPrepMC(TransformerMixin):
         df.loc[~df.carproducts.isnull(),'parse_pop'] = df.loc[~df.carproducts.isnull(),'carproducts'].apply(lambda u: get_vote(u))
         df.loc[:,'parse_pop2'] = df.loc[:,'parse_pop'].apply(lambda u: np.mean([float(re.sub(r"'rvoter': ",'',e)) for e in u ] ) if u else None)
         
-
-        print("type parse_pop2", df.parse_pop2.dtypes )
-        print("type mean_price", df.mean_price.dtypes )
         best_feature_mc = df.groupby('sid', as_index=False).agg({'proba_t' : ['mean','last'],'proba_t_mean_cum' : 'last', 'proba_pass' : ['mean','last', 'max'], \
                                                                 'proba_type' : 'mean', 'proba_A_sh_B' : 'mean', 'parse_pop2' : ['mean', 'max'], 'mean_price' : 'mean', 'ecart_mean_price' : ['mean', 'max']})
         best_feature_mc.columns = ['sid', 'proba_evnt_t_mean', 'proba_evnt_t_last',  'proba_pass_t_cum_last','proba_pass_mean','proba_pass_last','proba_pass_max', \
