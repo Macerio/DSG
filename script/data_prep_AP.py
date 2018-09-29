@@ -21,4 +21,5 @@ class DataPrepAP(TransformerMixin):
 		pv.fillna(value=0, inplace=True)
 		pv = pv.add_prefix('cat_level1_')
 		df_agg_sid = pd.merge(df_agg_sid, pv, left_on='sid', right_on='cat_level1_sid', how='left')
+		df_agg_sid.drop("cat_level1_sid", inplace=True)
 		return df_agg_sid
